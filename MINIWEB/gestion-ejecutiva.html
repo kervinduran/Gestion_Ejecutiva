@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión Ejecutiva - Noguchi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    body { font-family: system-ui, sans-serif; }
+    .tab-active { border-bottom: 4px solid #1e40af; color: #1e40af; font-weight: 700; }
+    .estado-pendiente { background-color: #fee2e2; color: #b91c1c; }
+    .estado-proceso   { background-color: #fefce8; color: #854d0e; }
+    .estado-completado{ background-color: #ecfdf5; color: #15803d; }
+  </style>
+</head>
+<body class="bg-gray-100">
+
+<div class="flex min-h-screen">
+  <!-- Sidebar -->
+  <div class="w-72 bg-white shadow-2xl p-6 flex flex-col">
+    <div class="flex items-center gap-3 mb-12">
+      <div class="w-12 h-12 bg-blue-700 rounded-2xl flex items-center justify-center text-3xl text-white">📋</div>
+      <div>
+        <h1 class="text-3xl font-bold text-blue-900">Gestión Ejecutiva</h1>
+        <p class="text-blue-600 text-sm">Oficina de Comunicaciones</p>
+      </div>
+    </div>
+
+    <nav class="flex-1 space-y-2">
+      <button onclick="showPage(0)" class="tab w-full text-left px-6 py-4 rounded-2xl hover:bg-blue-50 flex items-center gap-4 text-lg" id="tab0">
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+      </button>
+      <button onclick="showPage(1)" class="tab w-full text-left px-6 py-4 rounded-2xl hover:bg-blue-50 flex items-center gap-4 text-lg" id="tab1">
+        <i class="fas fa-plus-circle"></i> Pedir Documento
+      </button>
+      <button onclick="showPage(2)" class="tab w-full text-left px-6 py-4 rounded-2xl hover:bg-blue-50 flex items-center gap-4 text-lg" id="tab2">
+        <i class="fas fa-list-check"></i> Mis Tareas
+      </button>
+    </nav>
+  </div>
+
+  <!-- Contenido -->
+  <div class="flex-1 p-8 overflow-auto">
+
+    <!-- DASHBOARD -->
+    <div id="page0">
+      <h1 class="text-5xl font-bold text-blue-900 mb-2">Hola, Kervin 👋</h1>
+      <p class="text-gray-600">Resumen en tiempo real • <span id="fecha-hoy" class="font-semibold"></span></p>
+
+      <div class="grid grid-cols-4 gap-6 mt-8">
+        <div class="bg-white rounded-3xl p-6 shadow-sm">
+          <p class="text-gray-500">Pendientes</p>
+          <p id="pendientes" class="text-6xl font-bold text-red-600">0</p>
+        </div>
+        <div class="bg-white rounded-3xl p-6 shadow-sm">
+          <p class="text-gray-500">% Cumplimiento</p>
+          <p id="cumplimiento" class="text-6xl font-bold text-emerald-600">0%</p>
+        </div>
+        <div class="bg-white rounded-3xl p-6 shadow-sm">
+          <p class="text-gray-500">Muy Urgentes</p>
+          <p id="muy-urgentes" class="text-6xl font-bold text-orange-600">0</p>
+        </div>
+        <div class="bg-white rounded-3xl p-6 shadow-sm">
+          <p class="text-gray-500">Total Tareas</p>
+          <p id="total-tareas" class="text-6xl font-bold text-blue-600">0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PEDIR DOCUMENTO -->
+    <div id="page1" class="hidden">
+      <h1 class="text-4xl font-bold text-blue-900 mb-8">📋 Pedir Documento (SGD)</h1>
+      <div class="max-w-2xl bg-white rounded-3xl shadow p-10">
+        <form id="form-jefa" class="space-y-8">
+          <div>
+            <label class="block text-sm font-medium mb-2">Tipo de Documento</label>
+            <select id="tipo-doc" class="w-full border border-gray-300 rounded-2xl px-6 py-5 text-lg">
+              <option value="">-- Seleccionar --</option>
+              <option value="Nota informativa">Nota informativa</option>
+              <option value="Hoja de envío">Hoja de envío</option>
+              <option value="Informe">Informe</option>
+              <option value="Memorándum">Memorándum</option>
+              <option value="Oficio">Oficio</option>
+              <option value="Carta">Carta</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Descripción completa</label>
+            <textarea id="descripcion" class="w-full border border-gray-300 rounded-3xl px-6 py-5 h-32 text-lg" placeholder="Escribe aquí el detalle del documento..." required></textarea>
+          </div>
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium mb-2">Fecha deseada</label>
+              <input id="fecha-deseada" type="date" class="w-full border border-gray-300 rounded-2xl px-6 py-5">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Prioridad</label>
+              <select id="prioridad" class="w-full border border-gray-300 rounded-2xl px-6 py-5 text-lg">
+                <option value="NORMAL">NORMAL</option>
+                <option value="URGENTE">URGENTE</option>
+                <option value="MUY URGENTE">MUY URGENTE</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-6 rounded-3xl text-xl font-semibold">Enviar Solicitud</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MIS TAREAS -->
+    <div id="page2" class="hidden">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-4xl font-bold text-blue-900">📋 Mis Tareas</h1>
+        <button onclick="limpiarTodo()" class="text-red-600 hover:text-red-700 text-sm flex items-center gap-2">
+          <i class="fas fa-trash"></i> Limpiar todo
+        </button>
+      </div>
+      <div class="bg-white rounded-3xl shadow overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="py-6 px-8 text-left">Fecha</th>
+              <th class="py-6 px-8 text-left">Tipo</th>
+              <th class="py-6 px-8 text-left">Descripción</th>
+              <th class="py-6 px-8 text-left">Prioridad</th>
+              <th class="py-6 px-8 text-left">Estado</th>
+              <th class="py-6 px-8 text-center">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-body" class="divide-y"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let tareas = JSON.parse(localStorage.getItem('tareas')) || [];   // Empieza completamente vacío
+
+function guardarDatos() {
+  localStorage.setItem('tareas', JSON.stringify(tareas));
+}
+
+function renderTodo() {
+  const pendientes = tareas.filter(t => t.estado !== "COMPLETADO").length;
+  const total = tareas.length;
+  const cumplimiento = total === 0 ? 100 : Math.round(((total - pendientes) / total) * 100);
+  const muyUrgentes = tareas.filter(t => t.prioridad === "MUY URGENTE").length;
+
+  document.getElementById("fecha-hoy").textContent = new Date().toLocaleDateString('es-PE');
+  document.getElementById("pendientes").textContent = pendientes;
+  document.getElementById("cumplimiento").textContent = cumplimiento + "%";
+  document.getElementById("muy-urgentes").textContent = muyUrgentes;
+  document.getElementById("total-tareas").textContent = total;
+
+  // Tabla Mis Tareas
+  const tbody = document.getElementById("tabla-body");
+  tbody.innerHTML = tareas.map(t => `
+    <tr class="hover:bg-gray-50">
+      <td class="px-8 py-6">${t.fecha}</td>
+      <td class="px-8 py-6 font-medium">${t.tipo}</td>
+      <td class="px-8 py-6">${t.desc}</td>
+      <td class="px-8 py-6"><span class="px-6 py-2 rounded-3xl text-sm ${t.prioridad === 'MUY URGENTE' ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'}">${t.prioridad}</span></td>
+      <td class="px-8 py-6">
+        <select onchange="cambiarEstado(${t.id}, this.value)" class="px-4 py-2 rounded-2xl text-sm border">
+          <option value="PENDIENTE" ${t.estado === 'PENDIENTE' ? 'selected' : ''}>PENDIENTE</option>
+          <option value="EN PROCESO" ${t.estado === 'EN PROCESO' ? 'selected' : ''}>EN PROCESO</option>
+          <option value="COMPLETADO" ${t.estado === 'COMPLETADO' ? 'selected' : ''}>COMPLETADO</option>
+        </select>
+      </td>
+      <td class="px-8 py-6 text-center">
+        <button onclick="eliminarTarea(${t.id})" class="text-red-500 hover:text-red-700 px-3 py-1"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`).join('');
+}
+
+function cambiarEstado(id, nuevoEstado) {
+  const tarea = tareas.find(t => t.id === id);
+  if (tarea) tarea.estado = nuevoEstado;
+  guardarDatos();
+  renderTodo();
+}
+
+function eliminarTarea(id) {
+  if (confirm("¿Eliminar esta tarea?")) {
+    tareas = tareas.filter(t => t.id !== id);
+    guardarDatos();
+    renderTodo();
+  }
+}
+
+function limpiarTodo() {
+  if (confirm("¿Borrar TODAS las tareas? Esta acción no se puede deshacer.")) {
+    tareas = [];
+    guardarDatos();
+    renderTodo();
+  }
+}
+
+// Formulario Jefa
+document.getElementById("form-jefa").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const nueva = {
+    id: Date.now(),
+    fecha: new Date().toLocaleDateString('es-PE'),
+    tipo: document.getElementById("tipo-doc").value || "OTRO",
+    desc: document.getElementById("descripcion").value,
+    prioridad: document.getElementById("prioridad").value,
+    estado: "PENDIENTE"
+  };
+  tareas.unshift(nueva);
+  guardarDatos();
+  renderTodo();
+  alert("✅ Solicitud enviada y agregada a Mis Tareas");
+  this.reset();
+  showPage(2);
+});
+
+function showPage(n) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
+  document.getElementById('tab' + n).classList.add('tab-active');
+  document.querySelectorAll('#page0, #page1, #page2').forEach(p => p.classList.add('hidden'));
+  document.getElementById('page' + n).classList.remove('hidden');
+}
+
+// Inicializar
+renderTodo();
+showPage(0);
+</script>
+</body>
+</html>
